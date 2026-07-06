@@ -97,7 +97,7 @@ public class AstParser : Object {
             int heading_level = consume_heading_level ();
 
             if (heading_level > 0) {
-                document.add_child (new HeadingNode (heading_level, collect_text (), "heading-%d".printf (heading_level)));
+                document.add_child (new HeadingNode (heading_level, collect_text (), "h%d".printf (heading_level)));
             } else if (check (TokenType.WORD) || check (TokenType.NUMBER) || check (TokenType.STRING)) {
                 document.add_child (new TextNode (collect_text ()));
             } else {
