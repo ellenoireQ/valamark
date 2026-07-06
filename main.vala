@@ -1,5 +1,16 @@
-void main () {
-  string mdCode = "\n#This is string ## 23456\n # abcde";
+void main (string[] args) {
+  if (args.length < 2) {
+    return;
+  }
+
+  string mdCode;
+
+  try {
+    FileUtils.get_contents (args[1], out mdCode);
+  } catch (FileError e) {
+    stderr.printf ("Error reading file: %s\n", e.message);
+    return;
+  }
 
   var lxc = new Lexer (mdCode);
 
