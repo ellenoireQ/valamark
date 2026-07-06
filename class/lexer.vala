@@ -15,10 +15,23 @@ public class Lexer {
     return (char) input[pos];
   }
 
+  private bool is_at_end() {
+    return pos >= input.length;
+  }
+
   private char advance() {
     char current = peek();
     pos++;
     return current;
+  }
+
+  bool match(char expected) {
+    if (is_at_end())return false;
+
+    if (input[pos] != expected)return false;
+
+    pos++;
+    return true;
   }
 
   public Gee.List<Token> tokenize() {
@@ -61,7 +74,13 @@ public class Lexer {
       } else {
         char adv = advance();
         switch (adv) {
-        case '#': tokens.add(new Token(TokenType.HASH, "#")); break;
+        case '#':
+          if (match('#')) {
+            tokens.add(new Token(TokenType.DOUBLEHASH, "##"));
+          } else {
+            tokens.add(new Token(TokenType.HASH, "#"));
+          }
+          break;
         default:
           stderr.printf("Unexpected character: %c\n", adv);
           break;

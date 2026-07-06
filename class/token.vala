@@ -1,5 +1,5 @@
 public enum TokenType {
-  STRING, WORD, NUMBER, HASH, EOF;
+  STRING, WORD, NUMBER, HASH, DOUBLEHASH, EOF;
   public string to_string() {
     switch (this) {
     case STRING:
@@ -10,6 +10,8 @@ public enum TokenType {
       return "NUMBER";
     case HASH:
       return "HASH";
+    case DOUBLEHASH:
+      return "DOUBLEHASH";
     case EOF:
       return "EOF";
     default:
