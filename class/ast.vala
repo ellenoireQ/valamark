@@ -92,11 +92,11 @@ public class AstParser : Object {
 
         while (!is_at_end ()) {
             if (match (TokenType.HASH)) {
-                document.add_child (new HashNode ("#"));
+                document.add_child (new HeadingNode (1, collect_text ()));
             } else if (match (TokenType.DOUBLEHASH)) {
-                document.add_child (new HashNode ("##"));
+                document.add_child (new HeadingNode (2, collect_text ()));
             } else if (check (TokenType.WORD) || check (TokenType.NUMBER) || check (TokenType.STRING)) {
-                document.add_child (new TextNode (collect_text (false)));
+                document.add_child (new TextNode (collect_text ()));
             } else {
                 advance ();
             }
@@ -105,11 +105,11 @@ public class AstParser : Object {
         return document;
     }
 
-    private string collect_text (bool stop_on_heading) {
+    private string collect_text () {
         var builder = new StringBuilder ();
 
         while (!is_at_end ()) {
-            if (stop_on_heading && (check (TokenType.HASH) || check (TokenType.DOUBLEHASH))) {
+            if (check (TokenType.HASH) || check (TokenType.DOUBLEHASH)) {
                 break;
             }
 
