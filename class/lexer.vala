@@ -76,10 +76,9 @@ public class Lexer {
         switch (adv) {
         case '#':
           if (match('#')) {
-            tokens.add(new Token(TokenType.DOUBLEHASH, "##"));
-          } else {
             tokens.add(new Token(TokenType.HASH, "#"));
           }
+          tokens.add(new Token(TokenType.HASH, "#"));
           break;
         default:
           stderr.printf("Unexpected character: %c\n", adv);
