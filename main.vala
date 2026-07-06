@@ -1,11 +1,11 @@
 void main () {
-  string mdCode = "\n#This is string ## 23456";
+  string mdCode = "\n#This is string ## 23456\n # abcde";
 
   var lxc = new Lexer (mdCode);
 
   var token_list = lxc.tokenize ();
+  var parser = new AstParser (token_list);
+  var document = parser.parse ();
 
-  for (int ab = 0; ab < token_list.size; ab++) {
-    print ("%s\n", token_list.get (ab).type.to_string ());
-  }
+  print ("%s", document.to_string ());
 }

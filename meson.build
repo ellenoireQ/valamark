@@ -4,6 +4,6 @@ dependencies = [dependency('glib-2.0'), dependency('gobject-2.0'), dependency('g
 
 executable(
   'valamark',
-  ['main.vala', 'class/lexer.vala', 'class/token.vala'],
+  ['main.vala', 'class/lexer.vala', 'class/token.vala', 'class/ast.vala'],
   dependencies: dependencies,
 )
