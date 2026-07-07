@@ -1,5 +1,3 @@
-project('valamark', 'vala', 'c')
-
 deps = [dependency('glib-2.0'), dependency('gobject-2.0'), dependency('gee-0.8')]
 
 valamark_lib = library(
