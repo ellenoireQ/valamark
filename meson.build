@@ -1,17 +1,23 @@
 project('valamark', 'vala', 'c')
 
-dependencies = [dependency('glib-2.0'), dependency('gobject-2.0'), dependency('gee-0.8')]
+deps = [dependency('glib-2.0'), dependency('gobject-2.0'), dependency('gee-0.8')]
 
-unit_test = executable(
+valamark_lib = library(
   'valamark',
   [
-    'test/test.vala',
     'class/lexer.vala',
     'class/token.vala',
     'class/ast.vala',
     'class/valamark.vala',
   ],
-  dependencies: dependencies,
+  dependencies: deps,
+  vala_header: 'valamark.h',
+  vala_vapi: 'valamark.vapi',
+  install: true,
 )
 
-test('valamark basic test', unit_test)
+valamark_dep = declare_dependency(
+  link_with: valamark_lib,
+  include_directories: include_directories('class'),
+  dependencies: deps,
+)
