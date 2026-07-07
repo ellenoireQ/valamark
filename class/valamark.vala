@@ -6,6 +6,11 @@ public class Valamark {
     read_file (path);
   }
 
+  public Valamark.from_text (string text) {
+    m_buffer = text;
+    lexer = new Lexer (m_buffer);
+  }
+
   private Lexer read_file (string path) {
     try {
       FileUtils.get_contents (path, out m_buffer);

@@ -87,6 +87,23 @@ public struct ParsedElement {
   public string style;
   public int level;
 
+  public string to_markdown () {
+    if (level <= 0) {
+      return content;
+    }
+
+    var builder = new StringBuilder ();
+
+    for (int i = 0; i < level; i++) {
+      builder.append_c ('#');
+    }
+
+    builder.append_c (' ');
+    builder.append (content);
+
+    return builder.str;
+  }
+
   public string to_string () {
     return "{ element: \"%s\", content: \"%s\", style: \"%s\", level: %d }".printf (
                                                                                     element,
