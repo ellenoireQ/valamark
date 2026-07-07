@@ -17,8 +17,8 @@ public class Valamark {
     return lexer;
   }
 
-  public DocumentNode value () {
+  public ParsedElement[] value () {
     AstParser parser = new AstParser (lexer.tokenize ());
-    return parser.parse ();
+    return parser.parse_elements ();
   }
 }

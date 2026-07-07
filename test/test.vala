@@ -1,10 +1,13 @@
 void main (string[] args) {
-  var pd = new Valamark (args[1]);
   if (args.length < 2) {
     return;
   }
 
-  var document = pd.value ();
+  var pd = new Valamark (args[1]);
 
-  print ("%s", document.to_string ());
+  var elements = pd.value ();
+
+  foreach (var element in elements) {
+    print ("%s\n", element.to_string ());
+  }
 }
