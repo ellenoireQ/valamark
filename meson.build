@@ -4,7 +4,13 @@ dependencies = [dependency('glib-2.0'), dependency('gobject-2.0'), dependency('g
 
 unit_test = executable(
   'valamark',
-  ['test/test.vala', 'class/lexer.vala', 'class/token.vala', 'class/ast.vala'],
+  [
+    'test/test.vala',
+    'class/lexer.vala',
+    'class/token.vala',
+    'class/ast.vala',
+    'class/valamark.vala',
+  ],
   dependencies: dependencies,
 )
 

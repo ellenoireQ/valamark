@@ -1,20 +1,12 @@
 void main (string[] args) {
+  var pd = new Valamark ();
   if (args.length < 2) {
     return;
   }
 
-  string mdCode;
+  var apd = pd.read_file (args[1]);
 
-  try {
-    FileUtils.get_contents (args[1], out mdCode);
-  } catch (FileError e) {
-    stderr.printf ("Error reading file: %s\n", e.message);
-    return;
-  }
-
-  var lxc = new Lexer (mdCode);
-
-  var token_list = lxc.tokenize ();
+  var token_list = apd.tokenize ();
   var parser = new AstParser (token_list);
   var document = parser.parse ();
 
