@@ -16,6 +16,6 @@ valamark_lib = library(
 
 valamark_dep = declare_dependency(
   link_with: valamark_lib,
-  include_directories: include_directories('class'),
+  include_directories: [include_directories('.'), include_directories('class')],
   dependencies: deps,
 )
