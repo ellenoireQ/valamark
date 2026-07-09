@@ -75,9 +75,6 @@ public class Lexer {
         char adv = advance();
         switch (adv) {
         case '#':
-          if (match('#')) {
-            tokens.add(new Token(TokenType.HASH, "#"));
-          }
           tokens.add(new Token(TokenType.HASH, "#"));
           break;
         default:
