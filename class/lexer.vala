@@ -40,7 +40,14 @@ public class Lexer {
     while (pos < input.length) {
       char current = peek();
 
-      if (current.isspace()) {
+      if (current == '\n' || current == '\r') {
+        // Handle newlines
+        if (current == '\r' && peek() == '\n') {
+          advance(); // skip \r
+        }
+        advance(); // skip \n
+        tokens.add(new Token(TokenType.NEWLINE, "\n"));
+      } else if (current.isspace()) {
         advance();
       } else if (current.isdigit()) {
         var sb = new StringBuilder();

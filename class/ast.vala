@@ -145,6 +145,15 @@ public class AstParser : Object {
     ParsedElement[] elements = {};
 
     while (!is_at_end ()) {
+      // Skip any leading newlines
+      while (check (TokenType.NEWLINE)) {
+        advance ();
+      }
+
+      if (is_at_end ()) {
+        break;
+      }
+
       int heading_level = consume_heading_level ();
 
       if (heading_level > 0) {
@@ -158,6 +167,11 @@ public class AstParser : Object {
           heading.level = heading_level;
           elements += heading;
         }
+
+        // Consume the newline after heading
+        if (check (TokenType.NEWLINE)) {
+          advance ();
+        }
       } else if (check (TokenType.WORD) || check (TokenType.NUMBER) || check (TokenType.STRING)) {
         string paragraph_text = collect_text ();
 
@@ -168,6 +182,11 @@ public class AstParser : Object {
           paragraph.style = "p";
           paragraph.level = 0;
           elements += paragraph;
+        }
+
+        // Consume the newline after paragraph
+        if (check (TokenType.NEWLINE)) {
+          advance ();
         }
       } else {
         advance ();
@@ -181,13 +200,10 @@ public class AstParser : Object {
     var builder = new StringBuilder ();
 
     while (!is_at_end ()) {
-      if (check (TokenType.HASH)) {
-        break;
-      }
-
       var token = peek ();
 
-      if (token.type == TokenType.EOF) {
+      // Stop at hash or newline or EOF
+      if (token.type == TokenType.HASH || token.type == TokenType.NEWLINE || token.type == TokenType.EOF) {
         break;
       }
 
