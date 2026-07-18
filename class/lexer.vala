@@ -62,6 +62,9 @@ public class Lexer {
         while (peek() != '\0' && (peek().isalnum() || peek() == '_')) {
           sb.append_c(advance());
         }
+        if (peek() == '.') {
+          sb.append_c(advance());
+        }
         tokens.add(new Token(TokenType.WORD, sb.str));
       } else if (current == '"') {
         advance();
