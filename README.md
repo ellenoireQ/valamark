@@ -3,10 +3,11 @@
 A lightweight Markdown parser written in Vala that converts Markdown documents into an readable objects for [ideas](https://github.com/ellenoireQ/ideas).
 
 ## Features
+
 - [x] `h1`, `h2`, `h3`, `h4`, `h5`, `h6`
 - [ ] `---`
 - [ ] `paragraph`
-- [ ] `List`
+- [x] `List`
 - [ ] `Table`
 - `etc`
 
