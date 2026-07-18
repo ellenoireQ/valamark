@@ -188,6 +188,22 @@ public class AstParser : Object {
         if (check (TokenType.NEWLINE)) {
           advance ();
         }
+      } else if (check (TokenType.WORD) || check (TokenType.NUMBER) || check (TokenType.STRING) || check (TokenType.LIST)) {
+        string lists = collect_text ();
+
+        if (lists.length > 0) {
+          ParsedElement list = ParsedElement ();
+          list.element = "list";
+          list.content = lists;
+          list.style = "list";
+          list.level = 0;
+          elements += list;
+        }
+
+        // Consume the newline after paragraph
+        if (check (TokenType.NEWLINE)) {
+          advance ();
+        }
       } else {
         advance ();
       }

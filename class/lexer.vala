@@ -4,29 +4,29 @@ public class Lexer {
   private string input;
   private int pos = 0;
 
-  public Lexer(string input) {
+  public Lexer (string input) {
     this.input = input;
   }
 
-  private char peek() {
+  private char peek () {
     if (pos >= input.length) {
       return '\0';
     }
     return (char) input[pos];
   }
 
-  private bool is_at_end() {
+  private bool is_at_end () {
     return pos >= input.length;
   }
 
-  private char advance() {
-    char current = peek();
+  private char advance () {
+    char current = peek ();
     pos++;
     return current;
   }
 
-  bool match(char expected) {
-    if (is_at_end())return false;
+  bool match (char expected) {
+    if (is_at_end ())return false;
 
     if (input[pos] != expected)return false;
 
@@ -34,67 +34,71 @@ public class Lexer {
     return true;
   }
 
-  public Gee.List<Token> tokenize() {
+  public Gee.List<Token> tokenize () {
     var tokens = new Gee.ArrayList<Token> ();
 
     while (pos < input.length) {
-      char current = peek();
+      char current = peek ();
 
       if (current == '\n' || current == '\r') {
         // Handle newlines
-        if (current == '\r' && peek() == '\n') {
-          advance(); // skip \r
+        if (current == '\r' && peek () == '\n') {
+          advance (); // skip \r
         }
-        advance(); // skip \n
-        tokens.add(new Token(TokenType.NEWLINE, "\n"));
-      } else if (current.isspace()) {
-        advance();
-      } else if (current.isdigit()) {
-        var sb = new StringBuilder();
+        advance (); // skip \n
+        tokens.add (new Token (TokenType.NEWLINE, "\n"));
+      } else if (current.isspace ()) {
+        advance ();
+      } else if (current.isdigit ()) {
+        var sb = new StringBuilder ();
 
-        while (peek() != '\0' && peek().isdigit()) {
-          sb.append_c(advance());
+        while (peek () != '\0' && peek ().isdigit ()) {
+          sb.append_c (advance ());
         }
 
-        tokens.add(new Token(TokenType.NUMBER, sb.str));
-      } else if (current.isalpha()) {
-        var sb = new StringBuilder();
-        while (peek() != '\0' && (peek().isalnum() || peek() == '_')) {
-          sb.append_c(advance());
+        tokens.add (new Token (TokenType.NUMBER, sb.str));
+      } else if (current.isalpha ()) {
+        var sb = new StringBuilder ();
+        while (peek () != '\0' && (peek ().isalnum () || peek () == '_')) {
+          sb.append_c (advance ());
         }
-        if (peek() == '.') {
-          sb.append_c(advance());
+        if (peek () == '.') {
+          sb.append_c (advance ());
         }
-        tokens.add(new Token(TokenType.WORD, sb.str));
+        tokens.add (new Token (TokenType.WORD, sb.str));
       } else if (current == '"') {
-        advance();
-        var sb = new StringBuilder();
+        advance ();
+        var sb = new StringBuilder ();
 
 
-        while (peek() != '\0' && peek() != '"') {
-          sb.append_c(advance());
+        while (peek () != '\0' && peek () != '"') {
+          sb.append_c (advance ());
         }
 
-        if (peek() == '"') {
-          advance();
+        if (peek () == '"') {
+          advance ();
         } else {
-          stderr.printf("Error: String is not closed!\n");
+          stderr.printf ("Error: String is not closed!\n");
         }
-        tokens.add(new Token(TokenType.STRING, sb.str));
+        tokens.add (new Token (TokenType.STRING, sb.str));
       } else {
-        char adv = advance();
+        char adv = advance ();
         switch (adv) {
         case '#':
-          tokens.add(new Token(TokenType.HASH, "#"));
+          tokens.add (new Token (TokenType.HASH, "#"));
+          break;
+        case '-':
+          advance ();
+          tokens.add (new Token (TokenType.LIST, "-"));
           break;
         default:
-          stderr.printf("Unexpected character: %c\n", adv);
+          stderr.printf ("Unexpected character: %c\n", adv);
           break;
         }
       }
     }
 
-    tokens.add(new Token(TokenType.EOF, ""));
+    tokens.add (new Token (TokenType.EOF, ""));
     return tokens;
   }
 }
