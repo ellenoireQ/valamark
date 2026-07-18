@@ -188,7 +188,7 @@ public class AstParser : Object {
         if (check (TokenType.NEWLINE)) {
           advance ();
         }
-      } else if (check (TokenType.WORD) || check (TokenType.NUMBER) || check (TokenType.STRING) || check (TokenType.LIST)) {
+      } else if (check (TokenType.LIST)) {
         string lists = collect_text ();
 
         if (lists.length > 0) {
