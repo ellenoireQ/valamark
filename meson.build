@@ -19,3 +19,7 @@ valamark_dep = declare_dependency(
   include_directories: [include_directories('.'), include_directories('class')],
   dependencies: deps,
 )
+
+if get_option('test-valamark')
+  subdir('test')
+endif
