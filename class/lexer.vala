@@ -98,6 +98,17 @@ public class Lexer {
             tokens.add (new Token (TokenType.ITALIC, "*"));
           }
           break;
+        case '_':
+          if (match ('_')) {
+            if (match ('_')) {
+              tokens.add (new Token (TokenType.BOLD_ITALIC, "___"));
+            } else {
+              tokens.add (new Token (TokenType.BOLD, "__"));
+            }
+          } else {
+            tokens.add (new Token (TokenType.ITALIC, "_"));
+          }
+          break;
         default:
           stderr.printf ("Unexpected character: %c\n", adv);
           break;
