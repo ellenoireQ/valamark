@@ -9,6 +9,9 @@ A lightweight Markdown parser written in Vala that converts Markdown documents i
 - [ ] `paragraph`
 - [x] `List`
 - [ ] `Table`
+- [x] bold
+- [x] italic
+- [x] bold-italic
 - `etc`
 
 ## Usage
