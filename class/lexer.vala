@@ -67,8 +67,6 @@ public class Lexer {
       } else if (current == '"') {
         advance ();
         var sb = new StringBuilder ();
-
-
         while (peek () != '\0' && peek () != '"') {
           sb.append_c (advance ());
         }
@@ -88,6 +86,17 @@ public class Lexer {
         case '-':
           advance ();
           tokens.add (new Token (TokenType.LIST, "-"));
+          break;
+        case '*':
+          if (match ('*')) {
+            if (match ('*')) {
+              tokens.add (new Token (TokenType.BOLD_ITALIC, "***"));
+            } else {
+              tokens.add (new Token (TokenType.BOLD, "**"));
+            }
+          } else {
+            tokens.add (new Token (TokenType.ITALIC, "*"));
+          }
           break;
         default:
           stderr.printf ("Unexpected character: %c\n", adv);

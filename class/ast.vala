@@ -204,6 +204,54 @@ public class AstParser : Object {
         if (check (TokenType.NEWLINE)) {
           advance ();
         }
+      } else if (check (TokenType.WORD) || check (TokenType.ITALIC)) {
+        string contents = collect_text ();
+
+        if (contents.length > 0) {
+          ParsedElement content = ParsedElement ();
+          content.element = "italic";
+          content.content = contents;
+          content.style = "italic";
+          content.level = 0;
+          elements += content;
+        }
+
+        // Consume the newline after paragraph
+        if (check (TokenType.NEWLINE)) {
+          advance ();
+        }
+      } else if (check (TokenType.WORD) || check (TokenType.BOLD)) {
+        string contents = collect_text ();
+
+        if (contents.length > 0) {
+          ParsedElement content = ParsedElement ();
+          content.element = "bold";
+          content.content = contents;
+          content.style = "bold";
+          content.level = 0;
+          elements += content;
+        }
+
+        // Consume the newline after paragraph
+        if (check (TokenType.NEWLINE)) {
+          advance ();
+        }
+      } else if (check (TokenType.WORD) || check (TokenType.BOLD_ITALIC)) {
+        string contents = collect_text ();
+
+        if (contents.length > 0) {
+          ParsedElement content = ParsedElement ();
+          content.element = "bold-italic";
+          content.content = contents;
+          content.style = "bold-italic";
+          content.level = 0;
+          elements += content;
+        }
+
+        // Consume the newline after paragraph
+        if (check (TokenType.NEWLINE)) {
+          advance ();
+        }
       } else {
         advance ();
       }
