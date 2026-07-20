@@ -86,6 +86,7 @@ public struct ParsedElement {
   public string content;
   public string style;
   public int level;
+  public TokenType token;
 
   public string to_markdown () {
     if (level <= 0) {
@@ -105,11 +106,12 @@ public struct ParsedElement {
   }
 
   public string to_string () {
-    return "{ element: \"%s\", content: \"%s\", style: \"%s\", level: %d }".printf (
-                                                                                    element,
-                                                                                    content,
-                                                                                    style,
-                                                                                    level
+    return "{ element: \"%s\", content: \"%s\", style: \"%s\", level: %d, token: %s}".printf (
+                                                                                              element,
+                                                                                              content,
+                                                                                              style,
+                                                                                              level,
+                                                                                              token.to_string ()
     );
   }
 }
@@ -165,6 +167,7 @@ public class AstParser : Object {
           heading.content = heading_text;
           heading.style = "h%d".printf (heading_level);
           heading.level = heading_level;
+          heading.token = TokenType.HASH;
           elements += heading;
         }
 
@@ -181,6 +184,7 @@ public class AstParser : Object {
           paragraph.content = paragraph_text;
           paragraph.style = "p";
           paragraph.level = 0;
+          paragraph.token = TokenType.STRING;
           elements += paragraph;
         }
 
@@ -197,6 +201,7 @@ public class AstParser : Object {
           list.content = lists;
           list.style = "list";
           list.level = 0;
+          list.token = TokenType.LIST;
           elements += list;
         }
 
@@ -213,6 +218,7 @@ public class AstParser : Object {
           content.content = contents;
           content.style = "italic";
           content.level = 0;
+          content.token = TokenType.ITALIC;
           elements += content;
         }
 
@@ -229,6 +235,7 @@ public class AstParser : Object {
           content.content = contents;
           content.style = "bold";
           content.level = 0;
+          content.token = TokenType.BOLD;
           elements += content;
         }
 
@@ -245,6 +252,7 @@ public class AstParser : Object {
           content.content = contents;
           content.style = "bold-italic";
           content.level = 0;
+          content.token = TokenType.BOLD_ITALIC;
           elements += content;
         }
 
