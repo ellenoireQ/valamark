@@ -59,7 +59,7 @@ public class Lexer {
         tokens.add (new Token (TokenType.NUMBER, sb.str));
       } else if (current.isalpha ()) {
         var sb = new StringBuilder ();
-        while (peek () != '\0' && (peek ().isalnum () || peek () == '_' || peek () == '.' || peek () == ',' || peek () == '!' || peek () == '\''
+        while (peek () != '\0' && (peek ().isalnum () || peek () == '.' || peek () == ',' || peek () == '!' || peek () == '\''
                )) {
           sb.append_c (advance ());
         }
