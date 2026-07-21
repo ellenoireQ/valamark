@@ -87,6 +87,9 @@ public struct ParsedElement {
   public string style;
   public int level;
   public TokenType token;
+  public int content_offset;
+  public int offset_start;
+  public int offset_end;
 
   public string to_markdown () {
     if (level <= 0) {
@@ -132,9 +135,9 @@ public class AstParser : Object {
       int heading_level = consume_heading_level ();
 
       if (heading_level > 0) {
-        document.add_child (new HeadingNode (heading_level, collect_text (), "h%d".printf (heading_level)));
+        document.add_child (new HeadingNode (heading_level, collect_text (false), "h%d".printf (heading_level)));
       } else if (check (TokenType.WORD) || check (TokenType.NUMBER) || check (TokenType.STRING)) {
-        document.add_child (new TextNode (collect_text ()));
+        document.add_child (new TextNode (collect_text (false)));
       } else {
         advance ();
       }
@@ -159,7 +162,7 @@ public class AstParser : Object {
       int heading_level = consume_heading_level ();
 
       if (heading_level > 0) {
-        string heading_text = collect_text ();
+        string heading_text = collect_text (false);
 
         if (heading_text.length > 0) {
           ParsedElement heading = ParsedElement ();
@@ -176,7 +179,7 @@ public class AstParser : Object {
           advance ();
         }
       } else if (check (TokenType.WORD) || check (TokenType.NUMBER) || check (TokenType.STRING)) {
-        string paragraph_text = collect_text ();
+        string paragraph_text = collect_text (false);
 
         if (paragraph_text.length > 0) {
           ParsedElement paragraph = ParsedElement ();
@@ -193,73 +196,79 @@ public class AstParser : Object {
           advance ();
         }
       } else if (check (TokenType.LIST)) {
-        string lists = collect_text ();
+        int marker_start = peek ().value.length;
+        advance ();
+        string lists = collect_text (true);
 
-        if (lists.length > 0) {
-          ParsedElement list = ParsedElement ();
-          list.element = "list";
-          list.content = lists;
-          list.style = "list";
-          list.level = 0;
-          list.token = TokenType.LIST;
-          elements += list;
+        ParsedElement list = ParsedElement ();
+        list.element = "list";
+        list.content = lists;
+        list.style = "list";
+        list.token = TokenType.LIST;
+        list.content_offset = list.content.length;
+        list.offset_start = marker_start;
+        list.offset_end = 0;
+        elements += list;
+      } else if (check (TokenType.ITALIC)) {
+        int marker_start = peek ().value.length;
+        int marker_end = 0;
+        advance ();
+        string contents = collect_text (true);
+
+        if (check (TokenType.ITALIC)) {
+          marker_end = advance ().value.length;
         }
 
-        // Consume the newline after paragraph
-        if (check (TokenType.NEWLINE)) {
-          advance ();
-        }
-      } else if (check (TokenType.WORD) || check (TokenType.ITALIC)) {
-        string contents = collect_text ();
+        ParsedElement content = ParsedElement ();
+        content.element = "italic";
+        content.content = contents;
+        content.style = "italic";
+        content.token = TokenType.ITALIC;
+        content.content_offset = content.content.length;
+        content.offset_start = marker_start;
+        content.offset_end = marker_end;
 
-        if (contents.length > 0) {
-          ParsedElement content = ParsedElement ();
-          content.element = "italic";
-          content.content = contents;
-          content.style = "italic";
-          content.level = 0;
-          content.token = TokenType.ITALIC;
-          elements += content;
-        }
+        elements += content;
+      } else if (check (TokenType.BOLD)) {
+        int marker_start = peek ().value.length;
+        int marker_end = 0;
+        advance ();
+        string contents = collect_text (true);
 
-        // Consume the newline after paragraph
-        if (check (TokenType.NEWLINE)) {
-          advance ();
-        }
-      } else if (check (TokenType.WORD) || check (TokenType.BOLD)) {
-        string contents = collect_text ();
-
-        if (contents.length > 0) {
-          ParsedElement content = ParsedElement ();
-          content.element = "bold";
-          content.content = contents;
-          content.style = "bold";
-          content.level = 0;
-          content.token = TokenType.BOLD;
-          elements += content;
+        if (check (TokenType.BOLD)) {
+          marker_end = advance ().value.length;
         }
 
-        // Consume the newline after paragraph
-        if (check (TokenType.NEWLINE)) {
-          advance ();
-        }
-      } else if (check (TokenType.WORD) || check (TokenType.BOLD_ITALIC)) {
-        string contents = collect_text ();
+        ParsedElement content = ParsedElement ();
+        content.element = "bold";
+        content.content = contents;
+        content.style = "bold";
+        content.token = TokenType.BOLD;
+        content.content_offset = content.content.length;
+        content.offset_start = marker_start;
+        content.offset_end = marker_end;
 
-        if (contents.length > 0) {
-          ParsedElement content = ParsedElement ();
-          content.element = "bold-italic";
-          content.content = contents;
-          content.style = "bold-italic";
-          content.level = 0;
-          content.token = TokenType.BOLD_ITALIC;
-          elements += content;
+        elements += content;
+      } else if (check (TokenType.BOLD_ITALIC)) {
+        int marker_start = peek ().value.length;
+        int marker_end = 0;
+        advance ();
+        string contents = collect_text (true);
+
+        if (check (TokenType.BOLD_ITALIC)) {
+          marker_end = advance ().value.length;
         }
 
-        // Consume the newline after paragraph
-        if (check (TokenType.NEWLINE)) {
-          advance ();
-        }
+        ParsedElement content = ParsedElement ();
+        content.element = "bold-italic";
+        content.content = contents;
+        content.style = "bold-italic";
+        content.token = TokenType.BOLD_ITALIC;
+        content.content_offset = content.content.length;
+        content.offset_start = marker_start;
+        content.offset_end = marker_end;
+
+        elements += content;
       } else {
         advance ();
       }
@@ -268,14 +277,25 @@ public class AstParser : Object {
     return elements;
   }
 
-  private string collect_text () {
+  private string collect_text (bool stop_at_formatting = true) {
     var builder = new StringBuilder ();
 
     while (!is_at_end ()) {
       var token = peek ();
 
       // Stop at hash or newline or EOF
-      if (token.type == TokenType.HASH || token.type == TokenType.NEWLINE || token.type == TokenType.EOF) {
+      if (token.type == TokenType.HASH ||
+          token.type == TokenType.NEWLINE ||
+          token.type == TokenType.EOF) {
+        break;
+      }
+
+      // Stop at formatting markers only if requested
+      if (stop_at_formatting && (
+                                 token.type == TokenType.BOLD ||
+                                 token.type == TokenType.ITALIC ||
+                                 token.type == TokenType.BOLD_ITALIC ||
+                                 token.type == TokenType.LIST)) {
         break;
       }
 
